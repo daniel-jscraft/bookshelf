@@ -1,9 +1,11 @@
-export * from './index.final'
+import * as React from 'react'
+import {createRoot} from 'react-dom/client'
+import {Logo} from 'components/logo'
 
-// export * from './index.exercise'
+const App = function() {
+    return <Logo />
+}
 
-// 💯 Use `@reach/dialog`
-// export * from './index.extra-1'
-
-// 💯 Create a LoginForm component
-// export * from './index.extra-2'
+const root = createRoot(document.getElementById('root'))
+root.render(<App />)
+export {root}
