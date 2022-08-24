@@ -2,16 +2,23 @@ import * as React from 'react'
 import { useState } from 'react'
 import {createRoot} from 'react-dom/client'
 import {Logo} from 'components/logo'
+import {LoginForm} from 'components/login-form'
 import '@reach/dialog/styles.css'
 import {Dialog} from '@reach/dialog'
+
 
 const OPEN_MODAL_REGISTER = 'register_open_modal'
 const OPEN_MODAL_LOGIN = 'login_open_modal'  
 
 const App = function() {
-    const [openModal, setOpenModal] = useState('')
+    const [openModal, setOpenModal] = useState('none')
 
-    const closeModals = () => setOpenModal('')
+    const closeModals = () => setOpenModal('none')
+
+    const login = (data) => {
+        console.log("----------")
+        console.log(data)
+    }
 
     return (<>
         <Logo />
@@ -31,7 +38,7 @@ const App = function() {
             <button className="close-button" onClick={closeModals}>
                 <span aria-hidden>×</span>
             </button>
-            <p>Login HERE</p>
+            <LoginForm onSubmit={login} />
         </Dialog>
     </>)
 }
