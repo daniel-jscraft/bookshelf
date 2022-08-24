@@ -3,8 +3,8 @@ import { useState } from 'react'
 import {createRoot} from 'react-dom/client'
 import {Logo} from 'components/logo'
 import {LoginForm} from 'components/login-form'
-import '@reach/dialog/styles.css'
-import {Dialog} from '@reach/dialog'
+import {Dialog} from 'components/lib'
+
 
 
 const OPEN_MODAL_REGISTER = 'register_open_modal'
