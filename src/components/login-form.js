@@ -1,5 +1,5 @@
 import * as React from 'react'
-
+import {CircleButton} from './lib'
 
 const LoginForm = function({onSubmit}) {
 
@@ -21,7 +21,7 @@ const LoginForm = function({onSubmit}) {
             <label htmlFor="password"><b>Password</b></label>
             <input type="password" placeholder="Enter Password" name="password" required />
         </div>
-        <button type="submit">Login</button>
+        <CircleButton type="submit">Login</CircleButton>
     </form>)
 }
 
