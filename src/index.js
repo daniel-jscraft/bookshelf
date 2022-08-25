@@ -3,7 +3,7 @@ import { useState } from 'react'
 import {createRoot} from 'react-dom/client'
 import {Logo} from 'components/logo'
 import {LoginForm} from 'components/login-form'
-import {Dialog} from 'components/lib'
+import {Dialog, CircleButton} from 'components/lib'
 
 
 
@@ -28,16 +28,12 @@ const App = function() {
         </div>
 
         <Dialog isOpen={openModal === OPEN_MODAL_REGISTER} onDismiss={closeModals}>
-            <button className="close-button" onClick={closeModals}>
-                <span aria-hidden>×</span>
-            </button>
+            <CircleButton aria-hidden onClick={closeModals}>x</CircleButton>
             <p>Register HERE</p>
         </Dialog>
 
         <Dialog isOpen={openModal === OPEN_MODAL_LOGIN} onDismiss={closeModals}>
-            <button className="close-button" onClick={closeModals}>
-                <span aria-hidden>×</span>
-            </button>
+            <CircleButton aria-hidden onClick={closeModals}>x</CircleButton>
             <LoginForm onSubmit={login} />
         </Dialog>
     </>)
