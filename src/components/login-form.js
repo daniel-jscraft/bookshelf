@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {CircleButton, Input, Button} from './lib'
+import {Button, Input, FormGroup} from './lib'
 
 const LoginForm = function({onSubmit}) {
 
@@ -13,15 +13,16 @@ const LoginForm = function({onSubmit}) {
     }
 
     return (<form onSubmit={handeSubmit}>
-        <div>
-            <label htmlFor="uname"><b>username</b></label>
+        <FormGroup>
+            <label htmlFor="uname"><b>Username: </b></label>
             <Input type="text" placeholder="Enter Username" name="username" required />
-        </div>
-        <div>
-            <label htmlFor="password"><b>Password</b></label>
+        </FormGroup>
+        
+        <FormGroup>
+            <label htmlFor="password"><b>Password: </b></label>
             <Input type="password" placeholder="Enter Password" name="password" required />
-        </div>
-        <Button type="submit">Login</Button>
+        </FormGroup>
+        <Button type="submit" variant="secondary"> Login </Button>
     </form>)
 }
 

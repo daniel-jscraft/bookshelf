@@ -36,11 +36,18 @@ const Input = styled.input({
     padding: '8px 12px',
 })
 
-const Button = styled.input({ 
+const Button = styled.button(props => ({ 
     padding: '10px 15px',
     border: '0',
     lineHeight: '1',
     borderRadius: '3px',
+    background: props.variant === 'secondary' ? '#3f51b5' : '#f1f2f7',
+    color: props.variant === 'secondary' ? 'white' : '#434449',
+    cursor: 'pointer',
+}))
+
+const FormGroup = styled.div({
+    margin: '1rem 0'
 })
 
-export {CircleButton, Dialog, Input, Button}
+export {CircleButton, Dialog, Input, Button, FormGroup}
