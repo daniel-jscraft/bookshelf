@@ -1,5 +1,6 @@
 /** @jsx jsx */
 import {jsx} from '@emotion/core'
+import * as colors from 'styles/colors'
 
 import './bootstrap'
 import Tooltip from '@reach/tooltip'
@@ -14,15 +15,25 @@ function DiscoverBooksScreen() {
   const [status, setStatus] = useState('idle')
   const [query, setQuery] = useState()
   const [data, setData] = useState()
+  const [error, setError] = useState()
   
   useEffect(() => {
     if(!query) {
       return
     }
+
     setStatus('loading')
     setData(null)
+    setError()
+
     apiRequest(`books?query=${encodeURIComponent(query)}`).then(
       response => {
+        console.log(error)
+        if (response.status == 500) {
+          setStatus('isError')
+          setError({message: response.message})
+          return
+        }
         setStatus('success')
         setData(response)
       }
@@ -75,6 +86,15 @@ function DiscoverBooksScreen() {
           <p>No books found. Try another search.</p>
         )
       ) : null}
+
+      {
+        (status === 'isError') ? (
+          <div css={{color: colors.danger}}>
+            <p>There was an error:</p>
+            <pre>{error.message}</pre>
+          </div>
+        ) : null
+      }
     </div>
   )
 }
