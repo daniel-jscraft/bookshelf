@@ -27,11 +27,6 @@ if (error) {
   throw error
 }
 
-var command =
-  'npx "https://gist.github.com/kentcdodds/bb452ffe53a5caa3600197e1d8005733" -q -- --no-autofill'
-console.log(
-  color('subtitle', '      Running the following command: ' + command),
-)
 
 var result = spawnSync(command, {stdio: 'inherit', shell: true})
 
