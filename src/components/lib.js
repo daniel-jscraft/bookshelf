@@ -1,6 +1,8 @@
 import styled from '@emotion/styled'
 import {Dialog as ReachDialog} from '@reach/dialog'
 import '@reach/dialog/styles.css'
+import * as colors from '../styles/colors'
+import * as mq from '../styles/media-queries'
 
 const CircleButton = styled.button({
     borderRadius: '30px',
@@ -23,10 +25,9 @@ const Dialog = styled(ReachDialog)({
     paddingBottom: '3.5em',
     boxShadow: '0 10px 30px -5px rgba(0, 0, 0, 0.2)',
     margin: '20vh auto',
-    '@media (max-width: 991px)': {
-        width: '100%',
-        margin: '10vh auto',
-    },
+    [mq.small] : {
+        border: '10px solid red'
+    }
 })
 
 const Input = styled.input({ 
@@ -36,11 +37,18 @@ const Input = styled.input({
     padding: '8px 12px',
 })
 
-const Button = styled.input({ 
+const Button = styled.button(props => ({ 
     padding: '10px 15px',
     border: '0',
     lineHeight: '1',
     borderRadius: '3px',
+    background: props.variant === 'secondary' ? colors.danger : colors.green,
+    color: props.variant === 'secondary' ? 'white' : '#434449',
+    cursor: 'pointer',
+}))
+
+const FormGroup = styled.div({
+    margin: '1rem 0'
 })
 
-export {CircleButton, Dialog, Input, Button}
+export {CircleButton, Dialog, Input, Button, FormGroup}
