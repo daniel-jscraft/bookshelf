@@ -6,13 +6,7 @@ const {
 } = require('./utils')
 
 const branch = spawnSync('git rev-parse --abbrev-ref HEAD')
-if (branch === 'main' && username === 'kentcdodds') {
-  updateExercises()
-} else {
-  console.log(
-    `The branch ${branch} is not "main" or the username ${username} is not kentcdodds. So skipping post-commit hook.`,
-  )
-}
+
 
 function updateExercises() {
   console.log('▶️  Updating exercise branches')
