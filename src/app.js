@@ -1,9 +1,29 @@
-export * from './app.final'
+/** @jsx jsx */
+import {jsx} from '@emotion/core'
 
-// export * from './app.exercise'
+import * as React from 'react'
+import * as auth from 'auth-provider'
+import {AuthenticatedApp} from './authenticated-app'
+import {UnauthenticatedApp} from './unauthenticated-app'
 
-// 💯 Load the user's data on page load
-// export * from './app.extra-1'
+function App() {
+    const [user, setUser] = React.useState()
 
-// 💯 Use `useAsync`
-// export * from './app.extra-2'
+    const doRegister = (credentials) => auth.register(credentials).then(u => setUser(u))
+    const doLogin = (credentials) => auth.login(credentials).then(u => setUser(u))
+
+    const doLogout = () => auth.logout().then( () => setUser(null) )
+    
+    return (
+        user ? 
+            <AuthenticatedApp user={user} logout={doLogout} /> : 
+            <UnauthenticatedApp register={doRegister} login={doLogin} />
+    )
+}
+
+export {App}
+
+/*
+eslint
+  no-unused-vars: "off",
+*/
