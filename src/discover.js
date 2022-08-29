@@ -1,54 +1,31 @@
 /** @jsx jsx */
 import {jsx} from '@emotion/core'
-import * as colors from 'styles/colors'
 
-import './bootstrap'
+import * as React from 'react'
 import Tooltip from '@reach/tooltip'
-import {FaSearch} from 'react-icons/fa'
+import {FaSearch, FaTimes} from 'react-icons/fa'
 import {Input, BookListUL, Spinner} from './components/lib'
 import {BookRow} from './components/book-row'
-import { client as apiRequest } from './utils/api-client'
-import {useAsync} from 'utils/hooks'
-import { useEffect, useState } from 'react'
+import {client} from './utils/api-client'
+import * as colors from './styles/colors'
+import {useAsync} from './utils/hooks'
 
 function DiscoverBooksScreen() {
-  const {data, error, status, run} = useAsync()
-  // const [status, setStatus] = useState('idle')
-  const [query, setQuery] = useState()
-  // const [data, setData] = useState()
-  // const [error, setError] = useState()
-  
-  
+  const {data, error, run, isLoading, isError, isSuccess} = useAsync()
+  const [query, setQuery] = React.useState()
+  const [queried, setQueried] = React.useState(false)
 
-  useEffect(() => {
-    console.log(' in useEffect')
-    if(query) {
-      console.log(' in run')
-      run(apiRequest(`books?query=${encodeURIComponent(query)}`))
+  React.useEffect(() => {
+    if (!queried) {
+      return
     }
-  }, [query, run])
-
-    // setStatus('loading')
-    // setData(null)
-    // setError()
-
-    // apiRequest(`books?query=${encodeURIComponent(query)}`).then(
-    //   response => {
-    //     console.log(error)
-    //     if (response.status == 500) {
-    //       setStatus('isError')
-    //       setError({message: response.message})
-    //       return
-    //     }
-    //     setStatus('success')
-    //     setData(response)
-    //   }
-  
+    run(client(`books?query=${encodeURIComponent(query)}`))
+  }, [query, queried, run])
 
   function handleSearchSubmit(event) {
     event.preventDefault()
-    console.log(event.target.search.value)
-    setQuery(event.target.search.value)
+    setQueried(true)
+    setQuery(event.target.elements.search.value)
   }
 
   return (
@@ -72,13 +49,26 @@ function DiscoverBooksScreen() {
                 background: 'transparent',
               }}
             >
-              {(status === 'loading') ? <Spinner /> : <FaSearch aria-label="search" />}
+              {isLoading ? (
+                <Spinner />
+              ) : isError ? (
+                <FaTimes aria-label="error" css={{color: colors.danger}} />
+              ) : (
+                <FaSearch aria-label="search" />
+              )}
             </button>
           </label>
         </Tooltip>
       </form>
 
-      { (status === 'success') ? (
+      {isError ? (
+        <div css={{color: colors.danger}}>
+          <p>There was an error:</p>
+          <pre>{error.message}</pre>
+        </div>
+      ) : null}
+
+      {isSuccess ? (
         data?.books?.length ? (
           <BookListUL css={{marginTop: 20}}>
             {data.books.map(book => (
@@ -91,15 +81,6 @@ function DiscoverBooksScreen() {
           <p>No books found. Try another search.</p>
         )
       ) : null}
-
-      {
-        (status === 'isError') ? (
-          <div css={{color: colors.danger}}>
-            <p>There was an error:</p>
-            <pre>{error.message}</pre>
-          </div>
-        ) : null
-      }
     </div>
   )
 }
