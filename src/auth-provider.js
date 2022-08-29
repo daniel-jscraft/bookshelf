@@ -30,7 +30,6 @@ async function logout() {
 }
 
 function getUserByToken(token) {
-  //return client('me', {}, token}).then(handleUserResponse)
   return api('me', {token}).then(handleUserResponse)
 }
 
