@@ -19,9 +19,7 @@ function App() {
       const tokenCheck = async () => {
         const token = await auth.getToken()
         if(token) {
-          client('me', {token}).then(data => {
-            console.log(data.user)
-          })
+          auth.getUserByToken(token).then(u => setUser(u))
         }
       }
       tokenCheck()

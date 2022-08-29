@@ -1,3 +1,5 @@
+import {client as api} from 'utils/api-client'
+
 // pretend this is firebase, netlify, or auth0's code.
 // you shouldn't have to implement something like this in your own app
 
@@ -28,7 +30,8 @@ async function logout() {
 }
 
 function getUserByToken(token) {
-  return client('me', {token}).then(handleUserResponse)
+  //return client('me', {}, token}).then(handleUserResponse)
+  return api('me', {token}).then(handleUserResponse)
 }
 
 // an auth provider wouldn't use your client, they'd have their own
@@ -41,6 +44,8 @@ async function client(endpoint, data) {
     body: JSON.stringify(data),
     headers: {'Content-Type': 'application/json'},
   }
+
+  console.log(config)
 
   return window.fetch(`${authURL}/${endpoint}`, config).then(async response => {
     const data = await response.json()
