@@ -6,13 +6,26 @@ import * as auth from 'auth-provider'
 import {AuthenticatedApp} from './authenticated-app'
 import {UnauthenticatedApp} from './unauthenticated-app'
 
+import {client} from 'utils/api-client'
+
 function App() {
     const [user, setUser] = React.useState()
 
     const doRegister = (credentials) => auth.register(credentials).then(u => setUser(u))
     const doLogin = (credentials) => auth.login(credentials).then(u => setUser(u))
-
     const doLogout = () => auth.logout().then( () => setUser(null) )
+
+    React.useEffect(() => {
+      const tokenCheck = async () => {
+        const token = await auth.getToken()
+        if(token) {
+          client('me', {token}).then(data => {
+            console.log(data.user)
+          })
+        }
+      }
+      tokenCheck()
+    }, [])
     
     return (
         user ? 

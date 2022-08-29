@@ -1,9 +1,25 @@
-// no final
+const apiURL = process.env.REACT_APP_API_URL
 
-export * from './api-client.exercise'
+function client(
+  endpoint,
+  {token, headers: customHeaders, ...customConfig} = {},
+) {
+  const config = {
+    headers: {
+      Authorization: token ? `Bearer ${token}` : undefined,
+      ...customHeaders,
+    },
+    ...customConfig,
+  }
 
-// 💯 automatically logout on 401
-// export * from './api-client.extra-3'
+  return window.fetch(`${apiURL}/${endpoint}`, config).then(async response => {
+    const data = await response.json()
+    if (response.ok) {
+      return data
+    } else {
+      return Promise.reject(data)
+    }
+  })
+}
 
-// 💯 Support posting data
-// export * from './api-client.extra-4'
+export {client}
