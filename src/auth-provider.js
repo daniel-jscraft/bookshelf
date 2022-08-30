@@ -1,5 +1,3 @@
-import {client as api} from 'utils/api-client'
-
 // pretend this is firebase, netlify, or auth0's code.
 // you shouldn't have to implement something like this in your own app
 
@@ -29,10 +27,6 @@ async function logout() {
   window.localStorage.removeItem(localStorageKey)
 }
 
-function getUserByToken(token) {
-  return api('me', {token}).then(handleUserResponse)
-}
-
 // an auth provider wouldn't use your client, they'd have their own
 // so that's why we're not just re-using the client
 const authURL = process.env.REACT_APP_AUTH_URL
@@ -44,8 +38,6 @@ async function client(endpoint, data) {
     headers: {'Content-Type': 'application/json'},
   }
 
-  console.log(config)
-
   return window.fetch(`${authURL}/${endpoint}`, config).then(async response => {
     const data = await response.json()
     if (response.ok) {
@@ -56,4 +48,4 @@ async function client(endpoint, data) {
   })
 }
 
-export {getToken, getUserByToken, login, register, logout, localStorageKey, client}
+export {getToken, login, register, logout, localStorageKey}
