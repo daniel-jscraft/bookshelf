@@ -2,15 +2,10 @@
 import {jsx} from '@emotion/core'
 
 import * as React from 'react'
-// We'll be doing a lot of stuff with the router on this page.
-// 🐨 Here's what you'll need to import from react-router-dom
-// Routes, Route, Link
 import {Button} from './components/lib'
 import * as mq from './styles/media-queries'
 import * as colors from './styles/colors'
-// 🐨 you'll need to import all the screen components in the screens directory
-// 💰 DiscoverBooksScreen, BookScreen, NotFoundScreen
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, useMatch } from 'react-router-dom'
 import { DiscoverBooksScreen } from 'screens/discover'
 import { BookScreen } from 'screens/book'
 import { NotFoundScreen } from 'screens/not-found'
@@ -61,6 +56,7 @@ function AuthenticatedApp({user, logout}) {
 }
 
 function NavLink(props) {
+  const linkIsActive = useMatch(props.to)
   return (
     <Link
       css={{
@@ -71,11 +67,12 @@ function NavLink(props) {
         height: '100%',
         color: colors.text,
         borderRadius: '2px',
-        borderLeft: '5px solid transparent',
+        borderLeft: linkIsActive ? '10px solid red' : '5px solid transparent',
+        background: linkIsActive ? colors.gray10 : 'transparent',
         ':hover': {
           color: colors.indigo,
           textDecoration: 'none',
-          background: colors.gray10,
+          background: linkIsActive ? colors.gray20 : colors.gray10,
         },
       }}
       {...props}
