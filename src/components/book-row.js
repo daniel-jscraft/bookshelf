@@ -1,11 +1,23 @@
 /** @jsx jsx */
 import {jsx} from '@emotion/core'
-import { Link } from 'react-router-dom'
+
+import {Link} from 'react-router-dom'
+// 🐨 get useQuery from react-query
+// 🐨 you'll also need the client from 'utils/api-client'
 import * as mq from 'styles/media-queries'
 import * as colors from 'styles/colors'
+import {StatusButtons} from './status-buttons'
+import {Rating} from './rating'
 
-function BookRow({book}) {
+function BookRow({user, book}) {
   const {title, author, coverImageUrl} = book
+
+  // 🐨 call useQuery here to get the list item
+  // queryKey should be 'list-items'
+  // queryFn should be a call to the list-items endpoint
+
+  // 🐨 assign listItem to the list item that has the same bookId as the book.id
+  const listItem = null
 
   const id = `book-row-book-${book.id}`
 
@@ -19,8 +31,8 @@ function BookRow({book}) {
       }}
     >
       <Link
-        to={`/book/${book.id}`}
         aria-labelledby={id}
+        to={`/book/${book.id}`}
         css={{
           minHeight: 270,
           flexGrow: 2,
@@ -65,6 +77,9 @@ function BookRow({book}) {
               >
                 {title}
               </h2>
+              {listItem?.finishDate ? (
+                <Rating user={user} listItem={listItem} />
+              ) : null}
             </div>
             <div css={{marginLeft: 10}}>
               <div
@@ -84,6 +99,20 @@ function BookRow({book}) {
           </small>
         </div>
       </Link>
+      <div
+        css={{
+          marginLeft: '20px',
+          position: 'absolute',
+          right: -20,
+          color: colors.gray80,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-around',
+          height: '100%',
+        }}
+      >
+        <StatusButtons user={user} book={book} />
+      </div>
     </div>
   )
 }
