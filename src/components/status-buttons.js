@@ -10,8 +10,8 @@ import {
   FaTimesCircle,
 } from 'react-icons/fa'
 import Tooltip from '@reach/tooltip'
-// 🐨 you'll need useQuery, useMutation, and queryCache from 'react-query'
-// 🐨 you'll also need client from 'utils/api-client'
+import { useMutation, useQuery, queryCache } from 'react-query'
+import { client as apiClient } from 'utils/api-client'
 import {useAsync} from 'utils/hooks'
 import * as colors from 'styles/colors'
 import {CircleButton, Spinner} from './lib'
@@ -72,6 +72,17 @@ function StatusButtons({user, book}) {
   // the mutate function should call the list-items endpoint with a POST
   // and the bookId the listItem is being created for.
 
+  const addBookToReadingList = () => {
+    console.log(book)
+    console.log(user)
+    return apiClient(`list-items`, {
+        token: user.token,
+        data: {
+            bookId: book.id
+        }
+    })
+  }
+
   return (
     <React.Fragment>
       {listItem ? (
@@ -91,6 +102,7 @@ function StatusButtons({user, book}) {
             // 🐨 add an onClick here that calls update with the data we want to update
             // 💰 to mark a list item as read, set the finishDate
             // {id: listItem.id, finishDate: Date.now()}
+            onClick={addBookToReadingList}
             icon={<FaCheckCircle />}
           />
         )
@@ -105,6 +117,7 @@ function StatusButtons({user, book}) {
       ) : (
         <TooltipButton
           label="Add to list"
+          onClick={addBookToReadingList}
           highlight={colors.indigo}
           // 🐨 add an onClick here that calls create
           icon={<FaPlusCircle />}
