@@ -1,11 +1,11 @@
 /** @jsx jsx */
 import {jsx} from '@emotion/core'
 
-// 🐨 you'll need useQuery from 'react-query'
-// 🐨 and client from 'utils/api-client'
+import {useQuery} from 'react-query'
 import {BookListUL} from './lib'
 import {BookRow} from './book-row'
 import {client as apiClient} from 'utils/api-client'
+import { useEffect, useState } from 'react'
 
 function ListItemList({
   user,
@@ -13,22 +13,21 @@ function ListItemList({
   noListItems,
   noFilteredListItems,
 }) {
-  // 🐨 call useQuery to get the list-items from the 'list-items' endpoint
-  // queryKey should be 'list-items'
-  // queryFn should call the 'list-items' endpoint
 
-  // 🐨 assign this to the list items you get back from react-query
+  const [listItems, setListItems] = useState([])
+  const [filteredListItems, setFilteredListItems] = useState()
 
-  apiClient(`list-items`, {token: user.token}).then(
-    data => {
-      console.log("go it")
-      console.log(data)
-    }
-  )
-
-  const listItems = null
-
-  const filteredListItems = listItems?.filter(filterListItems)
+  const userId = user.id
+  const result = useQuery({
+    queryKey: ['list-items', {userId}],
+    queryFn: (key, {userId}) =>
+      apiClient(`list-items`, {token: user.token}).then(data => {
+          console.log('in useQuery')
+          console.log(data)
+          setListItems(data.listItems)
+          setFilteredListItems(data.listItems)
+      }),
+  })
 
   if (!listItems?.length) {
     return <div css={{marginTop: '1em', fontSize: '1.2em'}}>{noListItems}</div>
