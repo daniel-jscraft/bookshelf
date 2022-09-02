@@ -58,5 +58,3 @@ function ModalContents({title, children, ...props}) {
 
 export {Modal, ModalDismissButton, ModalOpenButton, ModalContents}
 
-
-// testing
