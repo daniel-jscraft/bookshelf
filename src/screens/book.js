@@ -37,6 +37,7 @@ function BookScreen({user}) {
   // queryFn should be what's currently passed in the run function below
 
   // 💣 remove the useEffect here (react-query will handle that now)
+  // TODO here
   React.useEffect(() => {
     run(client(`books/${bookId}`, {token: user.token}))
   }, [run, bookId, user.token])

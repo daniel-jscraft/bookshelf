@@ -37,6 +37,7 @@ function DiscoverBooksScreen({user}) {
 
   const books = data ?? loadingBooks
 
+  // TODO 2 aici
   React.useEffect(() => {
     if (!queried) {
       return
