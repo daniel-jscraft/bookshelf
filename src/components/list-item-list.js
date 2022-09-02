@@ -14,20 +14,12 @@ function ListItemList({
   noFilteredListItems,
 }) {
 
-  const [listItems, setListItems] = useState([])
-  const [filteredListItems, setFilteredListItems] = useState()
-
-  const userId = user.id
-  const result = useQuery({
-    queryKey: ['list-items', {userId}],
-    queryFn: (key, {userId}) =>
-      apiClient(`list-items`, {token: user.token}).then(data => {
-          console.log('in useQuery')
-          console.log(data)
-          setListItems(data.listItems)
-          setFilteredListItems(data.listItems)
-      }),
+  const {data: listItems} = useQuery({
+    queryKey: 'list-items',
+    queryFn: () =>
+      apiClient(`list-items`, {token: user.token}).then(data => data.listItems),
   })
+  const filteredListItems = listItems?.filter(filterListItems)
 
   if (!listItems?.length) {
     return <div css={{marginTop: '1em', fontSize: '1.2em'}}>{noListItems}</div>
