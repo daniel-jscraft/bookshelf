@@ -48,13 +48,11 @@ function TooltipButton({label, highlight, onClick, icon, ...rest}) {
 }
 
 function StatusButtons({user, book}) {
-  // 🐨 call useQuery here to get the listItem (if it exists)
-  // queryKey should be 'list-items'
-  // queryFn should call the list-items endpoint
-
-  // 🐨 search through the listItems you got from react-query and find the
-  // one with the right bookId.
-  const listItem = null
+  const {data: listItem} = useQuery({
+    queryKey: `book-item-${book.id}`,
+    queryFn: () =>
+      apiClient(`books/${book.id}`, {token: user.token}).then(data => data.book),
+  })
 
   // 💰 for all the mutations below, if you want to get the list-items cache
   // updated after this query finishes then use the `onSettled` config option
@@ -73,8 +71,6 @@ function StatusButtons({user, book}) {
   // and the bookId the listItem is being created for.
 
   const addBookToReadingList = () => {
-    console.log(book)
-    console.log(user)
     return apiClient(`list-items`, {
         token: user.token,
         data: {
@@ -82,6 +78,7 @@ function StatusButtons({user, book}) {
         }
     })
   }
+
 
   return (
     <React.Fragment>
