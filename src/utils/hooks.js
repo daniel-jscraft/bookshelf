@@ -3,6 +3,20 @@ import {client as apiClient} from './api-client'
 import {useMutation, queryCache, useQuery} from 'react-query'
 
 
+function useDoBookItemUpdate(user) {
+  return useMutation(
+    data => 
+      apiClient(`list-items/${data.id}`, {
+        method: 'PUT',
+        data,
+        token: user.token,
+      }),
+      {
+        onSettled: () => queryCache.invalidateQueries('list-items')
+      }
+  )
+}
+
 function useDoBookSearch(user, query) {
   return useQuery({
     queryKey: ['bookSearch', {query}],
@@ -110,4 +124,4 @@ function useAsync(initialState) {
   }
 }
 
-export {useAsync, useDoBookUpdateHook, useDoBookSearch}
+export {useAsync, useDoBookUpdateHook, useDoBookSearch, useDoBookItemUpdate}

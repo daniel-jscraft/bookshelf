@@ -6,7 +6,8 @@ import debounceFn from 'debounce-fn'
 import {FaRegCalendarAlt} from 'react-icons/fa'
 import Tooltip from '@reach/tooltip'
 import {useParams} from 'react-router-dom'
-import {useQuery, useMutation, queryCache} from 'react-query'
+import {useQuery} from 'react-query'
+import {useDoBookItemUpdate} from 'utils/hooks'
 import {client} from 'utils/api-client'
 import {formatDate} from 'utils/misc'
 import * as mq from 'styles/media-queries'
@@ -122,18 +123,12 @@ function ListItemTimeframe({listItem}) {
 }
 
 function NotesTextarea({listItem, user}) {
-  const [mutate] = useMutation(
-    updates =>
-      client(`list-items/${updates.id}`, {
-        method: 'PUT',
-        data: updates,
-        token: user.token,
-      }),
-    {onSettled: () => queryCache.invalidateQueries('list-items')},
-  )
-  const debouncedMutate = React.useMemo(() => debounceFn(mutate, {wait: 300}), [
-    mutate,
+  const test = useDoBookItemUpdate(user)
+  const debouncedMutate = React.useMemo(() => debounceFn(test[0], {wait: 300}), [
+    test[0],
   ])
+
+  console.log(test)
 
   function handleNotesChange(e) {
     debouncedMutate({id: listItem.id, notes: e.target.value})

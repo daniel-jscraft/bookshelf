@@ -1,15 +1,54 @@
-// no final
+import {useQuery, useMutation, queryCache} from 'react-query'
+import {client} from './api-client'
 
-export * from './list-items.exercise'
+function useListItems(user) {
+  const {data: listItems} = useQuery({
+    queryKey: 'list-items',
+    queryFn: () =>
+      client(`list-items`, {token: user.token}).then(data => data.listItems),
+  })
+  return listItems ?? []
+}
 
-// 💯 Make hooks
-// export * from './list-items.extra-1'
+function useListItem(user, bookId) {
+  const listItems = useListItems(user)
+  return listItems.find(li => li.bookId === bookId) ?? null
+}
 
-// 💯 Handle mutation errors properly
-// export * from './list-items.extra-3'
+const defaultMutationOptions = {
+  onSettled: () => queryCache.invalidateQueries('list-items'),
+}
 
-// 💯 Add books to the query cache
-// export * from './list-items.extra-6'
+function useUpdateListItem(user) {
+  return useMutation(
+    updates =>
+      client(`list-items/${updates.id}`, {
+        method: 'PUT',
+        data: updates,
+        token: user.token,
+      }),
+    defaultMutationOptions,
+  )
+}
 
-// 💯 Add optimistic updates and recovery
-// export * from './list-items.extra-7'
+function useRemoveListItem(user) {
+  return useMutation(
+    ({id}) => client(`list-items/${id}`, {method: 'DELETE', token: user.token}),
+    defaultMutationOptions,
+  )
+}
+
+function useCreateListItem(user) {
+  return useMutation(
+    ({bookId}) => client(`list-items`, {data: {bookId}, token: user.token}),
+    defaultMutationOptions,
+  )
+}
+
+export {
+  useListItem,
+  useListItems,
+  useUpdateListItem,
+  useRemoveListItem,
+  useCreateListItem,
+}
