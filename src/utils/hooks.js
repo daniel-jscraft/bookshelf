@@ -1,7 +1,17 @@
 import * as React from 'react'
 import {client as apiClient} from './api-client'
-import {useMutation, queryCache} from 'react-query'
+import {useMutation, queryCache, useQuery} from 'react-query'
 
+
+function useDoBookSearch(user, query) {
+  return useQuery({
+    queryKey: ['bookSearch', {query}],
+    queryFn: () =>
+      apiClient(`books?query=${encodeURIComponent(query)}`, {
+        token: user.token,
+      }).then(data => data.books),
+  })
+}
 
 function useDoBookUpdateHook(user) {
   const [update] = useMutation(
@@ -15,8 +25,6 @@ function useDoBookUpdateHook(user) {
         onSettled: () => queryCache.invalidateQueries('list-items')
       }
   )
-  console.log('in lalaala')
-  console.log(user)
   return update
 }
 
@@ -102,4 +110,4 @@ function useAsync(initialState) {
   }
 }
 
-export {useAsync, useDoBookUpdateHook}
+export {useAsync, useDoBookUpdateHook, useDoBookSearch}

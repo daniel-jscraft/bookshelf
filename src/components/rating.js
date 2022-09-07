@@ -21,7 +21,6 @@ function Rating({listItem, user}) {
 
   const update = useDoBookUpdateHook(user)
 
-
   const doUpdate = ({id, rating}) => update({id, rating})
 
   React.useEffect(() => {
