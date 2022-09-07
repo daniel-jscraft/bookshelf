@@ -1,4 +1,24 @@
 import * as React from 'react'
+import {client as apiClient} from './api-client'
+import {useMutation, queryCache} from 'react-query'
+
+
+function useDoBookUpdateHook(user) {
+  const [update] = useMutation(
+    data => 
+      apiClient(`list-items/${data.id}`, {
+        method: 'PUT',
+        data,
+        token: user.token,
+      }),
+      {
+        onSettled: () => queryCache.invalidateQueries('list-items')
+      }
+  )
+  console.log('in lalaala')
+  console.log(user)
+  return update
+}
 
 function useSafeDispatch(dispatch) {
   const mounted = React.useRef(false)
@@ -82,4 +102,4 @@ function useAsync(initialState) {
   }
 }
 
-export {useAsync}
+export {useAsync, useDoBookUpdateHook}
