@@ -128,8 +128,6 @@ function NotesTextarea({listItem, user}) {
     updateNotes,
   ])
 
-  console.log(updateSatus)
-
   function handleNotesChange(e) {
     debouncedMutate({id: listItem.id, notes: e.target.value})
   }
