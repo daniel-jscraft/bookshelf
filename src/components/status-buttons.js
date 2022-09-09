@@ -9,11 +9,16 @@ import {
   FaBook,
   FaTimesCircle,
 } from 'react-icons/fa'
+
 import Tooltip from '@reach/tooltip'
-import {useQuery, useMutation, queryCache} from 'react-query'
-import {client} from 'utils/api-client'
-import {useAsync} from 'utils/hooks'
+import {
+  useListItem,
+  useUpdateListItem,
+  useCreateListItem,
+  useRemoveListItem,
+} from 'utils/list-items'
 import * as colors from 'styles/colors'
+import {useAsync} from 'utils/hooks'
 import {CircleButton, Spinner} from './lib'
 
 function TooltipButton({label, highlight, onClick, icon, ...rest}) {
@@ -47,33 +52,13 @@ function TooltipButton({label, highlight, onClick, icon, ...rest}) {
   )
 }
 
+// 💣 remove user from the props
 function StatusButtons({user, book}) {
-  const {data: listItems} = useQuery({
-    queryKey: 'list-items',
-    queryFn: () =>
-      client(`list-items`, {token: user.token}).then(data => data.listItems),
-  })
-  const listItem = listItems?.find(li => li.bookId === book.id) ?? null
-
-  const [update] = useMutation(
-    updates =>
-      client(`list-items/${updates.id}`, {
-        method: 'PUT',
-        data: updates,
-        token: user.token,
-      }),
-    {onSettled: () => queryCache.invalidateQueries('list-items')},
-  )
-
-  const [remove] = useMutation(
-    ({id}) => client(`list-items/${id}`, {method: 'DELETE', token: user.token}),
-    {onSettled: () => queryCache.invalidateQueries('list-items')},
-  )
-
-  const [create] = useMutation(
-    ({bookId}) => client(`list-items`, {data: {bookId}, token: user.token}),
-    {onSettled: () => queryCache.invalidateQueries('list-items')},
-  )
+  // 💣 remove the user from all these function calls
+  const listItem = useListItem(book.id, user)
+  const [update] = useUpdateListItem(user, {throwOnError: true})
+  const [remove] = useRemoveListItem(user, {throwOnError: true})
+  const [create] = useCreateListItem(user, {throwOnError: true})
 
   return (
     <React.Fragment>

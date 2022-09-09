@@ -2,22 +2,18 @@
 import {jsx} from '@emotion/core'
 
 import {Link} from 'react-router-dom'
-import {useQuery} from 'react-query'
-import {client} from 'utils/api-client'
+import {useListItem} from 'utils/list-items'
 import * as mq from 'styles/media-queries'
 import * as colors from 'styles/colors'
 import {StatusButtons} from './status-buttons'
 import {Rating} from './rating'
 
+// 💣 remove the user prop
+// the children components that needed it can get it from context
 function BookRow({user, book}) {
   const {title, author, coverImageUrl} = book
 
-  const {data: listItems} = useQuery({
-    queryKey: 'list-items',
-    queryFn: () =>
-      client(`list-items`, {token: user.token}).then(data => data.listItems),
-  })
-  const listItem = listItems?.find(li => li.bookId === book.id) ?? null
+  const listItem = useListItem(book.id)
 
   const id = `book-row-book-${book.id}`
 
@@ -78,7 +74,11 @@ function BookRow({user, book}) {
                 {title}
               </h2>
               {listItem?.finishDate ? (
-                <Rating user={user} listItem={listItem} />
+                <Rating
+                  // 💣 remove the user prop here
+                  user={user}
+                  listItem={listItem}
+                />
               ) : null}
             </div>
             <div css={{marginLeft: 10}}>
@@ -111,7 +111,11 @@ function BookRow({user, book}) {
           height: '100%',
         }}
       >
-        <StatusButtons user={user} book={book} />
+        <StatusButtons
+          // 💣 remove the user prop here
+          user={user}
+          book={book}
+        />
       </div>
     </div>
   )

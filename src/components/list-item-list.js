@@ -1,25 +1,23 @@
 /** @jsx jsx */
 import {jsx} from '@emotion/core'
 
-import {useQuery} from 'react-query'
-import {client} from 'utils/api-client'
+import {useListItems} from 'utils/list-items'
 import {BookListUL} from './lib'
 import {BookRow} from './book-row'
 
 function ListItemList({
+  // 🐨 no longer need to accept the user as a prop
   user,
   filterListItems,
   noListItems,
   noFilteredListItems,
 }) {
-  const {data: listItems} = useQuery({
-    queryKey: 'list-items',
-    queryFn: () =>
-      client(`list-items`, {token: user.token}).then(data => data.listItems),
-  })
-  const filteredListItems = listItems?.filter(filterListItems)
+  // 🐨 remove the user from this call
+  const listItems = useListItems(user)
 
-  if (!listItems?.length) {
+  const filteredListItems = listItems.filter(filterListItems)
+
+  if (!listItems.length) {
     return <div css={{marginTop: '1em', fontSize: '1.2em'}}>{noListItems}</div>
   }
   if (!filteredListItems.length) {
@@ -34,7 +32,11 @@ function ListItemList({
     <BookListUL>
       {filteredListItems.map(listItem => (
         <li key={listItem.id}>
-          <BookRow user={user} book={listItem.book} />
+          <BookRow
+            // 💣 remove the user prop here
+            user={user}
+            book={listItem.book}
+          />
         </li>
       ))}
     </BookListUL>

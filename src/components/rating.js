@@ -1,9 +1,11 @@
 /** @jsx jsx */
 import {jsx} from '@emotion/core'
+
 import * as React from 'react'
+import {useUpdateListItem} from 'utils/list-items'
 import {FaStar} from 'react-icons/fa'
 import * as colors from 'styles/colors'
-import {useDoBookUpdateHook} from 'utils/hooks'
+import {ErrorMessage} from 'components/lib'
 
 const visuallyHiddenCSS = {
   border: '0',
@@ -15,13 +17,11 @@ const visuallyHiddenCSS = {
   position: 'absolute',
   width: '1px',
 }
-
+// 💣 remove the user prop
 function Rating({listItem, user}) {
   const [isTabbing, setIsTabbing] = React.useState(false)
-
-  const update = useDoBookUpdateHook(user)
-
-  const doUpdate = ({id, rating}) => update({id, rating})
+  // 💣 we no longer need to pass the user here:
+  const [update, {error, isError}] = useUpdateListItem(user)
 
   React.useEffect(() => {
     function handleKeyDown(event) {
@@ -47,7 +47,7 @@ function Rating({listItem, user}) {
           value={ratingValue}
           checked={ratingValue === listItem.rating}
           onChange={() => {
-            doUpdate({id: listItem.id, rating: ratingValue})
+            update({id: listItem.id, rating: ratingValue})
           }}
           css={[
             visuallyHiddenCSS,
@@ -101,6 +101,13 @@ function Rating({listItem, user}) {
       }}
     >
       <span css={{display: 'flex'}}>{stars}</span>
+      {isError ? (
+        <ErrorMessage
+          error={error}
+          variant="inline"
+          css={{marginLeft: 6, fontSize: '0.7em'}}
+        />
+      ) : null}
     </div>
   )
 }

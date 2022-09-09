@@ -2,14 +2,11 @@
 import {jsx} from '@emotion/core'
 
 import * as React from 'react'
+import {queryCache} from 'react-query'
 import * as auth from 'auth-provider'
-import {BrowserRouter as Router} from 'react-router-dom'
-import {FullPageSpinner, FullPageErrorFallback} from './components/lib'
-import {client} from './utils/api-client'
-import {useAsync} from './utils/hooks'
-// 🐨 import the AuthContext you created in ./context/auth-context
-import {AuthenticatedApp} from './authenticated-app'
-import {UnauthenticatedApp} from './unauthenticated-app'
+import {client} from 'utils/api-client'
+import {useAsync} from 'utils/hooks'
+import {FullPageSpinner, FullPageErrorFallback} from 'components/lib'
 
 async function getUser() {
   let user = null
@@ -23,7 +20,10 @@ async function getUser() {
   return user
 }
 
-function App() {
+const AuthContext = React.createContext()
+AuthContext.displayName = 'AuthContext'
+
+function AuthProvider(props) {
   const {
     data: user,
     error,
@@ -33,6 +33,7 @@ function App() {
     isSuccess,
     run,
     setData,
+    status,
   } = useAsync()
 
   React.useEffect(() => {
@@ -43,6 +44,7 @@ function App() {
   const register = form => auth.register(form).then(user => setData(user))
   const logout = () => {
     auth.logout()
+    queryCache.clear()
     setData(null)
   }
 
@@ -55,18 +57,19 @@ function App() {
   }
 
   if (isSuccess) {
-    const props = {user, login, register, logout}
-    // 🐨 wrap all of this in the AuthContext.Provider and set the `value` to props
-    return user ? (
-      <Router>
-        {/* 💣 remove the props spread here */}
-        <AuthenticatedApp {...props} />
-      </Router>
-    ) : (
-      // 💣 remove the props spread here
-      <UnauthenticatedApp {...props} />
-    )
+    const value = {user, login, register, logout}
+    return <AuthContext.Provider value={value} {...props} />
   }
+
+  throw new Error(`Unhandled status: ${status}`)
 }
 
-export {App}
+function useAuth() {
+  const context = React.useContext(AuthContext)
+  if (context === undefined) {
+    throw new Error(`useAuth must be used within a AuthProvider`)
+  }
+  return context
+}
+
+export {AuthProvider, useAuth}

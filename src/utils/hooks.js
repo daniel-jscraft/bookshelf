@@ -1,46 +1,4 @@
 import * as React from 'react'
-import {client as apiClient} from './api-client'
-import {useMutation, queryCache, useQuery} from 'react-query'
-
-
-function useDoBookItemUpdate(user) {
-  return useMutation(
-    data => 
-      apiClient(`list-items/${data.id}`, {
-        method: 'PUT',
-        data,
-        token: user.token,
-      }),
-      {
-        onSettled: () => queryCache.invalidateQueries('list-items')
-      }
-  )
-}
-
-function useDoBookSearch(user, query) {
-  return useQuery({
-    queryKey: ['bookSearch', {query}],
-    queryFn: () =>
-      apiClient(`books?query=${encodeURIComponent(query)}`, {
-        token: user.token,
-      }).then(data => data.books),
-  })
-}
-
-function useDoBookUpdateHook(user) {
-  const [update] = useMutation(
-    data => 
-      apiClient(`list-items/${data.id}`, {
-        method: 'PUT',
-        data,
-        token: user.token,
-      }),
-      {
-        onSettled: () => queryCache.invalidateQueries('list-items')
-      }
-  )
-  return update
-}
 
 function useSafeDispatch(dispatch) {
   const mounted = React.useRef(false)
@@ -124,4 +82,4 @@ function useAsync(initialState) {
   }
 }
 
-export {useAsync, useDoBookUpdateHook, useDoBookSearch, useDoBookItemUpdate}
+export {useAsync}

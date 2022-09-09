@@ -6,40 +6,22 @@ import debounceFn from 'debounce-fn'
 import {FaRegCalendarAlt} from 'react-icons/fa'
 import Tooltip from '@reach/tooltip'
 import {useParams} from 'react-router-dom'
-import {useQuery} from 'react-query'
-import {useDoBookItemUpdate} from 'utils/hooks'
-import {client} from 'utils/api-client'
+import {useBook} from 'utils/books'
+import {useListItem, useUpdateListItem} from 'utils/list-items'
 import {formatDate} from 'utils/misc'
 import * as mq from 'styles/media-queries'
 import * as colors from 'styles/colors'
-import {Textarea} from 'components/lib'
+import {Spinner, Textarea, ErrorMessage} from 'components/lib'
 import {Rating} from 'components/rating'
 import {StatusButtons} from 'components/status-buttons'
-import bookPlaceholderSvg from 'assets/book-placeholder.svg'
 
-const loadingBook = {
-  title: 'Loading...',
-  author: 'loading...',
-  coverImageUrl: bookPlaceholderSvg,
-  publisher: 'Loading Publishing',
-  synopsis: 'Loading...',
-  loadingBook: true,
-}
-
+// 💣 remove the user prop
 function BookScreen({user}) {
   const {bookId} = useParams()
-  const {data: book = loadingBook} = useQuery({
-    queryKey: ['book', {bookId}],
-    queryFn: () =>
-      client(`books/${bookId}`, {token: user.token}).then(data => data.book),
-  })
-
-  const {data: listItems} = useQuery({
-    queryKey: 'list-items',
-    queryFn: () =>
-      client(`list-items`, {token: user.token}).then(data => data.listItems),
-  })
-  const listItem = listItems?.find(li => li.bookId === bookId) ?? null
+  // 💣 remove the user argument
+  const book = useBook(bookId, user)
+  // 💣 remove the user argument
+  const listItem = useListItem(bookId, user)
 
   const {title, author, coverImageUrl, publisher, synopsis} = book
 
@@ -83,13 +65,21 @@ function BookScreen({user}) {
               }}
             >
               {book.loadingBook ? null : (
-                <StatusButtons user={user} book={book} />
+                <StatusButtons
+                  // 💣 remove the user prop here
+                  user={user}
+                  book={book}
+                />
               )}
             </div>
           </div>
           <div css={{marginTop: 10, height: 46}}>
             {listItem?.finishDate ? (
-              <Rating user={user} listItem={listItem} />
+              <Rating
+                // 💣 remove the user prop here
+                user={user}
+                listItem={listItem}
+              />
             ) : null}
             {listItem ? <ListItemTimeframe listItem={listItem} /> : null}
           </div>
@@ -98,7 +88,11 @@ function BookScreen({user}) {
         </div>
       </div>
       {!book.loadingBook && listItem ? (
-        <NotesTextarea user={user} listItem={listItem} />
+        <NotesTextarea
+          // 💣 remove the user prop here
+          user={user}
+          listItem={listItem}
+        />
       ) : null}
     </div>
   )
@@ -122,10 +116,12 @@ function ListItemTimeframe({listItem}) {
   )
 }
 
+// 💣 remove the user prop here
 function NotesTextarea({listItem, user}) {
-  const [updateNotes, {status: updateSatus}] = useDoBookItemUpdate(user)
-  const debouncedMutate = React.useMemo(() => debounceFn(updateNotes, {wait: 300}), [
-    updateNotes,
+  // 💣 remove the user argument here
+  const [mutate, {error, isError, isLoading}] = useUpdateListItem(user)
+  const debouncedMutate = React.useMemo(() => debounceFn(mutate, {wait: 300}), [
+    mutate,
   ])
 
   function handleNotesChange(e) {
@@ -144,12 +140,17 @@ function NotesTextarea({listItem, user}) {
             marginBottom: '0.5rem',
             fontWeight: 'bold',
           }}
-        > Notes </label>
-        <p>
-          {updateSatus === 'loading' ? 
-            <i>saving ...</i> :
-            <i>last saved on: { Date.now() }</i>}
-        </p>
+        >
+          Notes
+        </label>
+        {isError ? (
+          <ErrorMessage
+            error={error}
+            variant="inline"
+            css={{marginLeft: 6, fontSize: '0.7em'}}
+          />
+        ) : null}
+        {isLoading ? <Spinner /> : null}
       </div>
       <Textarea
         id="notes"
