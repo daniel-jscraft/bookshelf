@@ -123,12 +123,12 @@ function ListItemTimeframe({listItem}) {
 }
 
 function NotesTextarea({listItem, user}) {
-  const test = useDoBookItemUpdate(user)
-  const debouncedMutate = React.useMemo(() => debounceFn(test[0], {wait: 300}), [
-    test[0],
+  const [updateNotes, {status: updateSatus}] = useDoBookItemUpdate(user)
+  const debouncedMutate = React.useMemo(() => debounceFn(updateNotes, {wait: 300}), [
+    updateNotes,
   ])
 
-  console.log(test)
+  console.log(updateSatus)
 
   function handleNotesChange(e) {
     debouncedMutate({id: listItem.id, notes: e.target.value})
@@ -146,9 +146,12 @@ function NotesTextarea({listItem, user}) {
             marginBottom: '0.5rem',
             fontWeight: 'bold',
           }}
-        >
-          Notes
-        </label>
+        > Notes </label>
+        <p>
+          {updateSatus === 'loading' ? 
+            <i>saving ...</i> :
+            <i>last saved on: { Date.now() }</i>}
+        </p>
       </div>
       <Textarea
         id="notes"
