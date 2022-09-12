@@ -30,9 +30,6 @@ function ErrorFallback({error}) {
 
 function AuthenticatedApp() {
   const {user, logout} = React.useContext(AuthContext)
-  console.log("-----------------")
-  console.log(user)
-  console.log(logout)
   return (
     <ErrorBoundary FallbackComponent={FullPageErrorFallback}>
       <div
