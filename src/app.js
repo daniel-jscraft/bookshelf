@@ -56,16 +56,14 @@ function App() {
 
   if (isSuccess) {
     const props = {user, login, register, logout}
-    
-    return <AuthContext.Provider value={props}>
-        user ? (
+    return user ? <AuthContext.Provider value={props}> (
           <Router>
-            <AuthenticatedApp />
+              <AuthenticatedApp />
           </Router>
-        ) : (
+        )</AuthContext.Provider> : (
           <UnauthenticatedApp {...props} />
         )
-    </AuthContext.Provider>
+    
   }
 }
 
