@@ -1,4 +1,14 @@
 import * as React from 'react'
+import { AuthContext } from 'context/auth-context'
+
+
+function useAuth() {
+  const authContext = React.useContext(AuthContext)
+  if (!authContext) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  return authContext
+}
 
 function useSafeDispatch(dispatch) {
   const mounted = React.useRef(false)
@@ -82,4 +92,4 @@ function useAsync(initialState) {
   }
 }
 
-export {useAsync}
+export {useAsync, useAuth}
