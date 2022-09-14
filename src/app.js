@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import {jsx} from '@emotion/core'
-
+import { AppProvider } from 'context/app-provider'
 import * as React from 'react'
 import * as auth from 'auth-provider'
 import {BrowserRouter as Router} from 'react-router-dom'
@@ -56,15 +56,17 @@ function App() {
 
   if (isSuccess) {
     const props = {user, login, register, logout}
-    return <AuthContext.Provider value={props}> 
-            {user ?  (
-              <Router>
-                  <AuthenticatedApp />
-              </Router>
-            ) : (
-              <UnauthenticatedApp />
-            )}
+    return <AppProvider>
+        <AuthContext.Provider value={props}> 
+            <Router>
+              {user ?  (  
+                    <AuthenticatedApp />
+              ) : (
+                <UnauthenticatedApp />
+              )}
+            </Router>
         </AuthContext.Provider>
+      </AppProvider>
   }
 }
 
